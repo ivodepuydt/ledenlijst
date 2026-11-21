@@ -33,5 +33,21 @@
     navigator.serviceWorker.register('sw.js').catch(function () {});
   }
 </script>
+<script>
+  // Laat de ledenlijst bellen, mailen, Signal en WhatsApp openen vanuit de app zelf
+  // (zonder "Doorgaan"-melding; na het gesprek kom je gewoon terug in de app).
+  window.addEventListener('message', function (e) {
+    if (!/\.googleusercontent\.com$/.test(new URL(e.origin).hostname)) return;
+    var d = e.data || {};
+    if (d.type !== 'wmv-open' || typeof d.url !== 'string') return;
+    if (!/^(tel:|mailto:|whatsapp:\/\/send\?phone=|sgnl:\/\/signal\.me\/)/.test(d.url)) return;
+    var a = document.createElement('a');
+    a.href = d.url;
+    a.rel = 'noopener';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+  });
+</script>
 </body>
 </html>
